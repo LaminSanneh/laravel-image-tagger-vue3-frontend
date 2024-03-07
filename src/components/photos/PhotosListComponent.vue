@@ -1,5 +1,7 @@
 <script>
 import { reactive, ref, toRefs } from 'vue';
+import Dropzone from 'dropzone';
+import 'dropzone/dist/dropzone.css';
 
 export default {
   setup() {
@@ -23,23 +25,38 @@ export default {
 
     let photosList = ref([]);
 
-    photosList = tempPhotos;
+    photosList.value = tempPhotos;
 
     // const state = reactive({
     //     photosList: tempPhotos,
     // })
 
+    console.log('setup');
     return {
       photosList
       // ...toRefs(state),
     };
+  },
+  mounted() {
+    const myDropzone = new Dropzone(this.$refs.myDropZoneRef, {
+      paramName: 'photo',
+      url: 'http://localhost:8000/api/photos'
+    });
+
+    // myDropzone.on('addedfile', (file) => {
+    //   console.log(`File added: ${file.name}`);
+    // });
   }
 };
 </script>
 
 <template>
   <div>
-    <h1>Photos List</h1>
+    <h2>Uploader</h2>
+    <div class="uploader-container">
+      <form action="/api/photos" class="dropzone" ref="myDropZoneRef"></form>
+    </div>
+    <h2>Photos List</h2>
     <div class="photos-list">
       <div class="single-photo" v-for="photo in photosList">
         <h2 class="photo-title">{{ photo.title }}</h2>
@@ -71,6 +88,8 @@ export default {
 
 .image-tag-container {
   background-color: #ffffff;
+  line-height: 0;
+  box-shadow: 0 2px 43px -4px rgba(255, 255, 255, 0.19);
 }
 
 .photo-title {
