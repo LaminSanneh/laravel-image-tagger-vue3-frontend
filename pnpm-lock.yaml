@@ -34,6 +34,9 @@ devDependencies:
   '@vue/test-utils':
     specifier: ^2.4.4
     version: 2.4.4(vue@3.4.21)
+  axios:
+    specifier: ^1.6.7
+    version: 1.6.7(debug@4.3.4)
   cypress:
     specifier: ^13.6.3
     version: 13.6.6
