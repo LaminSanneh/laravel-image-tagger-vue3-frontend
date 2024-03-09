@@ -6,97 +6,91 @@
       <div class="tags-and-image-container">
         <!-- <div class="tags-container"> -->
         <TagComponent
-          v-for="tag in tags"
-          :style="{ left: tag.xOffset + '%', top: tag.yOffset + '%' }"
+          v-for="tag in tagsList"
+          v-bind:key="tag.id"
+          :tag="tag"
+          :style="{ left: tag.x_offset + '%', top: tag.y_offset + '%' }"
           class="tag-component-container"
+          @tag-updated="tagUpdatedHandler"
+        />
+        <TagComponent
+          v-show="newTagFormIsVisible"
+          key="-1"
+          :tag="newTagModel"
+          :isEditing="true"
+          :style="{ left: newTagModel.x_offset + '%', top: newTagModel.y_offset + '%' }"
+          class="tag-component-container"
+          @new-tag-created="newTagCreatedHandler"
         />
         <!-- </div> -->
-        <img v-on:click="createNewTag" :src="photo.url" alt="" srcset="" />
+        <img v-on:click="createNewTag" :src="photo.photo_url" alt="" srcset="" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import TagComponent from '../tags/TagComponent.vue';
 
 // import TagComponent from '../tags/TagComponent.vue';
 
 export default {
-  props: ['photo'],
+  props: ['photo', 'tags'],
   components: {
     TagComponent
   },
   setup(props) {
-    // console.log(props);
-    // console.log(props.photo);
-    // console.log({ ...props.photo });
-
-    const photo = props.photo;
-    const tags = ref([
-      {
-        xOffset: 0,
-        yOffset: 0
-      },
-      {
-        xOffset: 0,
-        yOffset: 20
-      },
-      {
-        xOffset: 20,
-        yOffset: 0
-      }
-    ]);
-
-    // console.log(photo);
-
-    // console.log(props);
+    const tagsList = ref([...props.tags]);
+    const newTagFormIsVisible = ref(false);
+    const newTagModel = reactive({
+      tag_title: 'New tag title',
+      x_offset: 0,
+      y_offset: 0,
+      photo_id: 0
+    });
 
     return {
-      photo,
-      tags
+      tagsList,
+      newTagModel,
+      newTagFormIsVisible
     };
   },
   methods: {
     createNewTag(event) {
-      // ( (pageX- 474) /972) * 100;
+      this.showNewTagForm();
 
-      // photoWidth = event.srcElement.clientWidth;
-      // photoLeftOffsetFromPageBeginning = (pageWidth - photoWidth) / 2;
-      // // or
-      // photoLeftOffsetFromPageBeginning = event.srcElement.x;
-
-      // pageX = event.pageX;
-
-      // absolutePercentage = (pageX - (photoLeftOffsetFromPageBeginning) / photoWidth) * 100;
-
-      console.log(event, 'hello');
-      // const = photoLeftOffsetFromPageBeginning = (pageWidth - photoWidth) / 2;
-      // or
       const photoWidth = event.srcElement.clientWidth;
       const photoHeight = event.srcElement.clientHeight;
-
-      // const photoLeftOffsetFromPageBeginning = event.srcElement.x;
-      // const photoTopOffsetFromPageBeginning = event.srcElement.y;
       const mouseClickOffsetFromLeftOfImage = event.offsetX;
       const mouseClickOffsetFromTopOfImage = event.offsetY;
-      const clickedPositionFromPagebeginningX = event.pageX;
-      const clickedPositionFromPagebeginningY = event.pageY;
-      // const absolutePercentageX =
-      //   ((clickedPositionFromPagebeginningX - photoLeftOffsetFromPageBeginning) / photoWidth) * 100;
-      // const absolutePercentageY =
-      //   ((clickedPositionFromPagebeginningY - photoTopOffsetFromPageBeginning) / photoHeight) * 100;
       const absolutePercentageX = (mouseClickOffsetFromLeftOfImage / photoWidth) * 100;
       const absolutePercentageY = (mouseClickOffsetFromTopOfImage / photoHeight) * 100;
 
-      debugger;
-      this.tags.push({
-        xOffset: absolutePercentageX,
-        yOffset: absolutePercentageY
+      this.newTagModel.tag_title = 'New tag title';
+      this.newTagModel.x_offset = absolutePercentageX;
+      this.newTagModel.y_offset = absolutePercentageY;
+      this.newTagModel.photo_id = this.photo.id;
+    },
+    newTagCreatedHandler({ id, tag_title, x_offset, y_offset, photo_id }) {
+      this.tagsList.push({
+        id,
+        tag_title,
+        x_offset,
+        y_offset,
+        photo_id
       });
-
-      console.log(this.tags);
+      this.hideNewTagForm();
+    },
+    tagUpdatedHandler(updatedTagData) {
+      debugger;
+      // this.tagsList.push(updatedTagData);
+    },
+    hideNewTagForm() {
+      this.newTagFormIsVisible = false;
+    },
+    showNewTagForm() {
+      this.newTagFormIsVisible = true;
     }
   }
 };

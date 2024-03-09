@@ -1,12 +1,12 @@
 <template>
-  <div class="tag-details" :class="{ 'tag-is-open': tagIsOpen }">
+  <div class="tag-details" :class="{ 'tag-is-open': isOpen }">
     <div class="tag-header">
       <div v-on:click="toggleTagOpen" class="tag-opener-closer"></div>
       <div class="tag-delete"></div>
     </div>
     <div class="tag-body">
       <p class="tag-title">{{ title }}</p>
-      <form class="tag-form">
+      <form v-on:submit.prevent="saveTagTitle" class="tag-form">
         <input
           @input="(event) => (title = event.target.value)"
           :value="title"
@@ -19,21 +19,58 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import tagService from '@/services/tagService';
+import { ref, watch } from 'vue';
 
 export default {
-  setup() {
-    const title = ref('Temp title');
-    const tagIsOpen = ref(false);
+  props: {
+    tag: Object,
+    isEditing: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup(props) {
+    const title = ref(props.tag.tag_title);
+    const isOpen = ref(props.isEditing);
+    const id = ref(props.tag.id);
+
+    watch(props.tag, (newTag, oldTag) => {
+      title.value = newTag.tag_title;
+    });
 
     return {
       title,
-      tagIsOpen
+      isOpen,
+      id
+      // isEditing
     };
   },
   methods: {
     toggleTagOpen() {
-      this.tagIsOpen = !this.tagIsOpen;
+      this.isOpen = !this.isOpen;
+    },
+    saveTagTitle() {
+      if (this.id) {
+        const tagData = { tag_title: this.title };
+        tagService.updateTag(this.id, tagData).then((updatedTagData) => {
+          console.log('Updated tag with data:');
+          console.log(updatedTagData);
+          this.$emit('tagUpdated', updatedTagData);
+        });
+      } else {
+        const tagData = {
+          tag_title: this.title,
+          x_offset: this.$props.tag.x_offset,
+          y_offset: this.$props.tag.y_offset
+        };
+
+        tagService.saveTagForPhoto(this.tag.photo_id, tagData).then((newTagData) => {
+          console.log('Created tag for photo with data:');
+          console.log(newTagData);
+          this.$emit('newTagCreated', newTagData);
+        });
+      }
     }
   }
 };

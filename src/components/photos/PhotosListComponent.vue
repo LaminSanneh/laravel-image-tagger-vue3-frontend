@@ -1,6 +1,7 @@
 <script>
-import { reactive, ref, toRefs } from 'vue';
+import { ref } from 'vue';
 import Dropzone from 'dropzone';
+import photoService from '@/services/photoService';
 import 'dropzone/dist/dropzone.css';
 
 export default {
@@ -8,24 +9,29 @@ export default {
     const tempPhotos = [
       {
         id: 1,
-        title: 'BMW X5 Blue 1',
-        url: '/images/bmw-x5-blue1.jpg'
+        photo_title: 'BMW X5 Blue 1',
+        photo_url: '/images/bmw-x5-blue1.jpg'
       },
       {
         id: 2,
-        title: 'Mercedes Red 1',
-        url: '/images/mercedes-red-1.jpg'
+        photo_title: 'Mercedes Red 1',
+        photo_url: '/images/mercedes-red-1.jpg'
       },
       {
         id: 3,
-        title: 'Mercedes Blue 1',
-        url: '/images/mercedes-blue-1.png'
+        photo_title: 'Mercedes Blue 1',
+        photo_url: '/images/mercedes-blue-1.png'
       }
     ];
 
     let photosList = ref([]);
 
-    photosList.value = tempPhotos;
+    // const fetchedPhotos = await photoService.getPhotos();
+
+    // debugger;
+    // photosList.value = tempPhotos;
+    photoService.getPhotos().then((fetchedPhotos) => (photosList.value = fetchedPhotos));
+    // photosList.value = fetchedPhotos;
 
     // const state = reactive({
     //     photosList: tempPhotos,
@@ -43,6 +49,8 @@ export default {
       url: 'http://localhost:8000/api/photos'
     });
 
+    console.log('Mounted');
+
     // myDropzone.on('addedfile', (file) => {
     //   console.log(`File added: ${file.name}`);
     // });
@@ -59,9 +67,9 @@ export default {
     <h2>Photos List</h2>
     <div class="photos-list">
       <div class="single-photo" v-for="photo in photosList">
-        <h2 class="photo-title">{{ photo.title }}</h2>
+        <h2 class="photo-title">{{ photo.photo_title }}</h2>
         <RouterLink class="photo-link" :to="{ name: 'photo-view', params: { id: photo.id } }">
-          <div class="image-tag-container"><img :src="photo.url" alt="" srcset="" /></div>
+          <div class="image-tag-container"><img :src="photo.photo_url" alt="" srcset="" /></div>
         </RouterLink>
       </div>
     </div>
