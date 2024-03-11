@@ -1,14 +1,14 @@
 <template>
-  <div class="tag-details" :class="{ 'tag-is-open': isOpen }">
+  <div class="tag-details" :class="{ 'tag-is-open': isOpen, 'tag-is-dirty': isDirty }">
     <div class="tag-header">
       <div v-on:click="toggleTagOpen" class="tag-opener-closer"></div>
-      <div class="tag-delete"></div>
+      <div class="tag-delete">x</div>
     </div>
     <div class="tag-body">
       <p class="tag-title">{{ title }}</p>
       <form v-on:submit.prevent="saveTagTitle" class="tag-form">
         <input
-          @input="(event) => (title = event.target.value)"
+          @input="titleInputChanged"
           :value="title"
           type="text"
           placeholder="Add Tag Title here"
@@ -34,6 +34,7 @@ export default {
     const title = ref(props.tag.tag_title);
     const isOpen = ref(props.isEditing);
     const id = ref(props.tag.id);
+    const isDirty = ref(false);
 
     watch(props.tag, (newTag, oldTag) => {
       title.value = newTag.tag_title;
@@ -42,8 +43,8 @@ export default {
     return {
       title,
       isOpen,
-      id
-      // isEditing
+      id,
+      isDirty
     };
   },
   methods: {
@@ -56,6 +57,7 @@ export default {
         tagService.updateTag(this.id, tagData).then((updatedTagData) => {
           console.log('Updated tag with data:');
           console.log(updatedTagData);
+          this.isDirty = false;
           this.$emit('tagUpdated', updatedTagData);
         });
       } else {
@@ -68,9 +70,20 @@ export default {
         tagService.saveTagForPhoto(this.tag.photo_id, tagData).then((newTagData) => {
           console.log('Created tag for photo with data:');
           console.log(newTagData);
+          this.isDirty = false;
           this.$emit('newTagCreated', newTagData);
         });
       }
+    },
+    titleInputChanged(event) {
+      const titleValue = event.target.value;
+      if (titleValue !== this.$props.tag.tag_title) {
+        this.isDirty = true;
+      } else {
+        this.isDirty = false;
+      }
+
+      this.title = titleValue;
     }
   }
 };
@@ -101,6 +114,13 @@ export default {
 .tag-form,
 .tag-title {
   margin-left: 15px;
+}
+.tag-is-dirty {
+  .tag-form {
+    input {
+      border: 1px dashed red;
+    }
+  }
 }
 .tag-opener-closer {
   $tag-opener-closer-width: 18px;
