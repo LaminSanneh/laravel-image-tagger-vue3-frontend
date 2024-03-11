@@ -18,10 +18,6 @@ context('Home Page List Photos', () => {
         cy.get('.photos-list').should('have.length', 1);
     });
 
-    it('should have two image in .single-photo container', () => {
-        cy.get('.single-photo').should('have.length', 2);
-    });
-
     it('should have response body of backendserver-url/api/photos with length 1', () => {
         cy.wait('@getPhotos').its('response.body')
             .should('have.length', 2);
@@ -34,9 +30,11 @@ context('Home Page List Photos', () => {
             .to.deep.equal(requiredApiPhotos);
     });
 
-    it('loads photos and photo titles', () => {
+    it('loads correct amount of photos along with photo titles', () => {
         cy.get('.image-tag-container img').eq(0).should('be.visible').invoke('width').should('be.gt', 10);
         cy.get('.image-tag-container img').eq(1).should('be.visible').invoke('width').should('be.gt', 10);
+
+        cy.get('.single-photo').should('have.length', 2);
 
         cy.get('.single-photo .photo-title').eq(0).should('contain', requiredApiPhotos[0].photo_title);
         cy.get('.single-photo .photo-title').eq(1).should('contain', requiredApiPhotos[1].photo_title);
