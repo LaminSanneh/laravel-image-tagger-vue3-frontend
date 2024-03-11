@@ -26,21 +26,11 @@ export default {
 
     let photosList = ref([]);
 
-    // const fetchedPhotos = await photoService.getPhotos();
-
-    // debugger;
-    // photosList.value = tempPhotos;
     photoService.getPhotos().then((fetchedPhotos) => (photosList.value = fetchedPhotos));
-    // photosList.value = fetchedPhotos;
-
-    // const state = reactive({
-    //     photosList: tempPhotos,
-    // })
 
     console.log('setup');
     return {
       photosList
-      // ...toRefs(state),
     };
   },
   mounted() {
@@ -48,12 +38,6 @@ export default {
       paramName: 'photo',
       url: 'http://localhost:8000/api/photos'
     });
-
-    console.log('Mounted');
-
-    // myDropzone.on('addedfile', (file) => {
-    //   console.log(`File added: ${file.name}`);
-    // });
   }
 };
 </script>
@@ -66,7 +50,7 @@ export default {
     </div>
     <h2>Photos List</h2>
     <div class="photos-list">
-      <div class="single-photo" v-for="photo in photosList">
+      <div class="single-photo" v-for="photo in photosList" :key="photo.id">
         <h2 class="photo-title">{{ photo.photo_title }}</h2>
         <RouterLink class="photo-link" :to="{ name: 'photo-view', params: { id: photo.id } }">
           <div class="image-tag-container"><img :src="photo.photo_url" alt="" srcset="" /></div>
