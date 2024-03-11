@@ -37,7 +37,8 @@ context('Single Photo Page After Clicking one on homepage', () => {
             .invoke('width')
             .should('be.gt', 10);
 
-        cy.get('.tags-and-image-container .tag-component-container').should('have.length', requiredApiPhotos[0].tags.length + 1);
+        cy.get('.tags-and-image-container .tag-component-container').filter(':not(:visible)').should('have.length', 1);
+        cy.get('.tags-and-image-container .tag-component-container').filter(':visible').should('have.length', requiredApiPhotos[0].tags.length);
     })
 
     it('should navigate to correct(second) single photo page and have correct number of tags in dom', () => {
@@ -56,6 +57,7 @@ context('Single Photo Page After Clicking one on homepage', () => {
             .invoke('width')
             .should('be.gt', 10);
 
-        cy.get('.tags-and-image-container .tag-component-container').should('have.length', requiredApiPhotos[1].tags.length + 1);
+        cy.get('.tags-and-image-container .tag-component-container').filter(':not(:visible)').should('have.length', 1);
+        cy.get('.tags-and-image-container .tag-component-container').filter(':visible').should('have.length', requiredApiPhotos[1].tags.length);
     })
 })
