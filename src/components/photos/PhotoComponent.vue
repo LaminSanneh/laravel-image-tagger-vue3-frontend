@@ -1,9 +1,9 @@
 <template>
   <div>
-    <p>My photo Component</p>
+    <p><button v-on:click="toggleTagsVisibility">Toggle Tags</button></p>
     <div class="single-photo">
       <h2 class="photo-title">{{ photo.title }}</h2>
-      <div class="tags-and-image-container">
+      <div class="tags-and-image-container" :class="{ 'tags-are-visible': tagsAreVisible }">
         <!-- <div class="tags-container"> -->
         <TagComponent
           v-for="tag in tagsList"
@@ -43,6 +43,7 @@ export default {
   setup(props) {
     const tagsList = ref([...props.tags]);
     const newTagFormIsVisible = ref(false);
+    const tagsAreVisible = ref(true);
     const newTagModel = reactive({
       tag_title: 'New tag title',
       x_offset: 0,
@@ -53,11 +54,15 @@ export default {
     return {
       tagsList,
       newTagModel,
-      newTagFormIsVisible
+      newTagFormIsVisible,
+      tagsAreVisible
     };
   },
   methods: {
     createNewTag(event) {
+      if (this.tagsAreVisible === false) {
+        return;
+      }
       this.showNewTagForm();
 
       const photoWidth = event.srcElement.clientWidth;
@@ -83,6 +88,8 @@ export default {
       this.hideNewTagForm();
     },
     tagUpdatedHandler(updatedTagData) {
+      const tagInListToBeSynchronized = this.tagsList.find((tag) => tag.id === updatedTagData.id);
+      tagInListToBeSynchronized.tag_title = updatedTagData.tag_title;
       debugger;
       // this.tagsList.push(updatedTagData);
     },
@@ -91,6 +98,9 @@ export default {
     },
     showNewTagForm() {
       this.newTagFormIsVisible = true;
+    },
+    toggleTagsVisibility() {
+      this.tagsAreVisible = !this.tagsAreVisible;
     }
   }
 };
@@ -125,8 +135,11 @@ export default {
 .tag-component-container {
   // background-color: #000000;
   position: absolute;
-  // display: inline-block;
-  // top: 100px;
-  // left: 100px;
+}
+
+.tags-and-image-container:not(.tags-are-visible) {
+  .tag-component-container {
+    visibility: hidden;
+  }
 }
 </style>
