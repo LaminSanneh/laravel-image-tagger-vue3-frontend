@@ -14,9 +14,8 @@
     "photo_title": "BMW X3",
     "photo_url": "http://localhost:8000/storage/jddeOpaU9efPPf9sRreVKKiq6La04H3J1GDJzxRO.jpg",
     "tags": [
-      { "id": 1, "tag_title": "tag1", "x_offset": 10, "y_offset": 10, "photo_id": 7 },
-      { "id": 2, "tag_title": "tag2", "x_offset": 20, "y_offset": 20, "photo_id": 7 },
-      { "id": 3, "tag_title": "tag3", "x_offset": 30, "y_offset": 30, "photo_id": 7 }
+      { "id": 4, "tag_title": "tag4", "x_offset": 10, "y_offset": 10, "photo_id": 7 },
+      { "id": 5, "tag_title": "tag5", "x_offset": 20, "y_offset": 20, "photo_id": 7 }
     ]
   }
 ]
