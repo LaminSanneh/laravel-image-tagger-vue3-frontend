@@ -5,9 +5,9 @@ const requiredApiPhotos = require('../../fixtures/api-photos');
 context('Home Page List Photos', () => {
 
     beforeEach(() => {
-        cy.intercept('GET', '**/api/photos', { fixture: 'api-photos.json' }).as('getPhotos');
+        cy.intercept('GET', '**/api/photos', { fixture: 'api-photos.json' }).as('getPhotosList');
 
-        cy.intercept('GET', '**/storage/*', { fixture: 'bmw-x5-blue1.jpg' }).as('getPhotos');
+        cy.intercept('GET', '**/storage/*', { fixture: 'bmw-x5-blue1.jpg' }).as('getPhotosFromSrc');
 
         cy.fixture('api-photos.json').as('apiPhotosResponse');
 
@@ -19,7 +19,7 @@ context('Home Page List Photos', () => {
     });
 
     it('should have response body of backendserver-url/api/photos with length 1', () => {
-        cy.wait('@getPhotos').its('response.body')
+        cy.wait('@getPhotosList').its('response.body')
             .should('have.length', 2);
     });
 
