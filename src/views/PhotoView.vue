@@ -23,8 +23,9 @@ let tags = ref([]);
 photoService.getPhoto(route.params.id).then((photoData) => {
   // console.log(photoData);
   photo.value = { ...photoData };
+  // TODO: Is tags needed here.
+  // Consider using it for toggling on homepage in a read-only manner.
   tags.value = [...photoData.tags];
-  console.log([tags, photo]);
 });
 </script>
 
