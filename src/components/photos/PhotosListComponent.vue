@@ -6,24 +6,6 @@ import 'dropzone/dist/dropzone.css';
 
 export default {
   setup() {
-    const tempPhotos = [
-      {
-        id: 1,
-        photo_title: 'BMW X5 Blue 1',
-        photo_url: '/images/bmw-x5-blue1.jpg'
-      },
-      {
-        id: 2,
-        photo_title: 'Mercedes Red 1',
-        photo_url: '/images/mercedes-red-1.jpg'
-      },
-      {
-        id: 3,
-        photo_title: 'Mercedes Blue 1',
-        photo_url: '/images/mercedes-blue-1.png'
-      }
-    ];
-
     let photosList = ref([]);
 
     photoService.getPhotos().then((fetchedPhotos) => (photosList.value = fetchedPhotos));
@@ -37,7 +19,17 @@ export default {
     const myDropzone = new Dropzone(this.$refs.myDropZoneRef, {
       paramName: 'photo',
       url: 'http://localhost:8000/api/photos'
+      // autoProcessQueue: false
     });
+
+    myDropzone.on('success', (file, results, xhr) => {
+      this.pushNewlyUploadedImageData(results);
+    });
+  },
+  methods: {
+    pushNewlyUploadedImageData(imageAttributes) {
+      this.photosList.push(imageAttributes);
+    }
   }
 };
 </script>
